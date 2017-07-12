@@ -1,9 +1,15 @@
 <?php
-
 require_once './RecommendationsModel.php';
+
 $recipeFilePath = "";
 $fridgeIndgFilePath = "";
-if (!empty($argv[1]) && !empty($argv[2]))
+if (!empty($_POST['submit']))
+{
+    echo "<a href='index.php' >Go Back</a><br />";
+    $recipeFilePath = $_FILES['fileFridge']['tmp_name'];
+    $fridgeIndgFilePath = $_FILES['fileRecipes']['tmp_name'];
+}
+elseif (!empty($argv[1]))
 {
     $recipeFilePath = $argv[1];
     $fridgeIndgFilePath = $argv[2];
