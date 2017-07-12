@@ -1,16 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of testRecommedation
- *
- * @author cmeda
- */
 require_once 'RecommendationsModel.php';
 
 class RecommedationTest extends PHPUnit_Framework_TestCase
@@ -37,6 +26,22 @@ class RecommedationTest extends PHPUnit_Framework_TestCase
 
         $parseFrideData = $recommendations->processCsv("./fridge.csv");
         $this->assertEquals($expectedFridgeData, $parseFrideData, "Failed to process the CSV file as expected");
+    }
+
+    public function testRecommedation()
+    {
+        $expectedRecomdation = array(
+            "name" => "salad sandwich",
+            "ingredients" => array(
+                array("item" => "bread", "amount" => "2", "unit" => "slices", "useByDiff" => (strtotime("25-12-2018") - time())),
+                array("item" => "mixed salad", "amount" => "100", "unit" => "grams", "useByDiff" => (strtotime("26-12-2018") - time()))
+        ));
+        $recommendations = new RecommendationsModel();
+        $frideData = $recommendations->processCsv("./fridge.csv");
+        $rawRecpData = file_get_contents("./recipes.json");
+        $recipData = json_decode($rawRecpData, 1);
+        $calcRecomdation = $recommendations->calcRecommdations($recipData, $frideData);
+        $this->assertEquals($expectedRecomdation, $calcRecomdation[0]);
     }
 
 }

@@ -1,16 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of model
- *
- * @author cmeda
- */
 class RecommendationsModel
 {
 
@@ -45,10 +34,52 @@ class RecommendationsModel
         return $fridgeData;
     }
 
-}
+    public function calcRecommdations($recipes, $frideIngeds)
+    {
+        $recommendations = array();
+        $timeStampNow = time();
+        /**
+         * loop through all the recipes
+         */
+        foreach ($recipes as $recipkey => $recipe)
+        {
+            $recipIngedCount = count($recipe['ingredients']);
+            $frideIngedsCanUseCount = 0;
+            /**
+             * loop through all the ingredients in the recipes
+             */
+            foreach ($recipe['ingredients'] as $recpIngredkey => $recpIngredient)
+            {
+                /**
+                 * loop through all the ingredients in the fridge
+                 */
+                foreach ($frideIngeds as $frideIngedsKey => $frideIngredient)
+                {
+                    $useByfrideIngred = strtotime(str_replace("/", "-", $frideIngredient[3]));
+                    /**
+                     * check if ingredients in the fridge map with the recipes
+                     */
+                    if (
+                            $useByfrideIngred >= $timeStampNow//check if the fridge ingredient is not expired
+                            &&
+                            $recpIngredient['item'] == $frideIngredient[0] //match the ingreditents
+                            &&
+                            $recpIngredient['amount'] <= $frideIngredient[1]//check if sufficient amount
+                            &&
+                            $recpIngredient['unit'] == $frideIngredient[2])//check the unit is the same
+                    {
+                        $frideIngedsCanUseCount++;
+                        $recipe['ingredients'][$recpIngredkey]['useByDiff'] = $useByfrideIngred - $timeStampNow; //append the time difference B/W now and expiry to calculate the closest ingredient for expiry if mulitple recpies
+                    }
+                }
+            }
+            if ($recipIngedCount == $frideIngedsCanUseCount)
+            {
+                $recommendations[] = $recipe;
+            }
+        }
 
-//$recommendations = new RecommendationsModel();
-//$frideData = $recommendations->processCsv("./fridge.csv");
-//$rawRecpData = file_get_contents("./recipes.json");
-//$recipData = json_decode($rawRecpData, 1);
-//$calcRecomdation = $recommendations->calcRecommdations($recipData, $frideData);
+        return $recommendations;
+    }
+
+}
