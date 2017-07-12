@@ -17,11 +17,32 @@ class RecommendationsModel
     public function checkFileExists($recipeFilePath, $fridgeIndgFilePath)
     {
         $boolExists = true;
+        if (!file_exists($recipeFilePath) && file_exists($fridgeIndgFilePath))
+        {
+            throw new Exception("The recipe file does not exsist");
+        }
+        if (!file_exists($fridgeIndgFilePath))
+        {
+            throw new Exception("The fridge ingredients file does not exsist");
+        }
         return $boolExists;
     }
 
     public function processCsv($csvFilePath)
     {
+        $fridgeData = array();
+        if (($handle = fopen($csvFilePath, "r")) !== FALSE)
+        {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
+            {
+                if (!empty($data[0]))
+                {
+                    $fridgeData[] = $data;
+                }
+            }
+            fclose($handle);
+        }
+        return $fridgeData;
     }
 
 }
