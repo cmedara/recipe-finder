@@ -82,4 +82,33 @@ class RecommendationsModel
         return $recommendations;
     }
 
+    public function calcTheLeastUseByIngredInRecip($recommendations)
+    {
+        $lowestTimeDifIngred = array(
+            'useByDiff' => 0,
+            'recpKey' => 0
+        );
+        $i = 0;
+        foreach ($recommendations as $recipkey => $recipe)
+        {
+            foreach ($recipe['ingredients'] as $recpIngredkey => $recpIngredient)
+            {
+                if ($i == 0)
+                {
+                    $lowestTimeDifIngred = array(
+                        'useByDiff' => $recpIngredient['useByDiff'],
+                        'recpKey' => $recipkey);
+                }
+                if ($recpIngredient['useByDiff'] <= $lowestTimeDifIngred['useByDiff'])
+                {
+                    $lowestTimeDifIngred = array(
+                        'useByDiff' => $recpIngredient['useByDiff'],
+                        'recpKey' => $recipkey);
+                }
+                $i++;
+            }
+        }
+        return array($recommendations[$lowestTimeDifIngred['recpKey']]);
+    }
+
 }

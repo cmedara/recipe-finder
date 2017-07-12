@@ -43,5 +43,36 @@ class RecommedationTest extends PHPUnit_Framework_TestCase
         $calcRecomdation = $recommendations->calcRecommdations($recipData, $frideData);
         $this->assertEquals($expectedRecomdation, $calcRecomdation[0]);
     }
+    
+    public function testCalcTheLeastUseByIngredInRecipe()
+    {
+        $expectedRecipe = array(
+                "name" => "salad sandwich",
+                "ingredients" => array(
+                    array("item" => "bread", "amount" => "2", "unit" => "slices", "useByDiff" => (strtotime("01-01-2018") - time())),
+                    array("item" => "mixed salad", "amount" => "100", "unit" => "grams", "useByDiff" => (strtotime("02-01-2018") - time()))
+                ),
+            );
+        $recipes = array(
+            $expectedRecipe,
+            array(
+                "name" => "cecil sandwich",
+                "ingredients" => array(
+                    array("item" => "bread", "amount" => "2", "unit" => "slices", "useByDiff" => (strtotime("04-01-2018") - time())),
+                    array("item" => "mixed salad", "amount" => "100", "unit" => "grams", "useByDiff" => (strtotime("05-01-2018") - time()))
+                ),
+            ),
+            array(
+                "name" => "grilled cheese on toast",
+                "ingredients" => array(
+                    array("item" => "bread", "amount" => "2", "unit" => "slices", "useByDiff" => (strtotime("09-01-2018") - time())),
+                    array("item" => "cheese", "amount" => "2", "unit" => "grams", "useByDiff" => (strtotime("03-01-2018") - time()))
+                ),
+            )
+        );
+        $recommendations = new RecommendationsModel();
+        $calcRecipe = $recommendations->calcTheLeastUseByIngredInRecip($recipes);
+        $this->assertEquals($expectedRecipe, $calcRecipe);
+    }
 
 }

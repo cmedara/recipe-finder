@@ -20,6 +20,14 @@ try
     $rawRecpData = file_get_contents("./recipes.json");
     $recipData = json_decode($rawRecpData, 1);
     $suggRecomdation = $recommendations->calcRecommdations($recipData, $frideData);
+    if (empty($suggRecomdation))
+    {
+        throw new Exception("Order Takeout");
+    }
+    if (count($suggRecomdation) > 1)
+    {
+        $suggRecomdation = $recommendations->calcTheLeastUseByIngredInRecip($suggRecomdation);
+    }
     echo $suggRecomdation[0]['name'];
 } 
 catch (Exception $ex)
