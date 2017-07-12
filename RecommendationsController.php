@@ -5,7 +5,7 @@ $recipeFilePath = "";
 $fridgeIndgFilePath = "";
 if (!empty($_POST['submit']))
 {
-    echo "<a href='index.php' >Go Back</a><br />";
+    echo "<center><a href='index.php' >Go Back</a><br />";
     $recipeFilePath = $_FILES['fileFridge']['tmp_name'];
     $fridgeIndgFilePath = $_FILES['fileRecipes']['tmp_name'];
 }
@@ -34,9 +34,10 @@ try
     {
         $suggRecomdation = $recommendations->calcTheLeastUseByIngredInRecip($suggRecomdation);
     }
-    echo $suggRecomdation[0]['name'];
+    echo "<h1>".$suggRecomdation[0]['name']."<h1>";
 } 
 catch (Exception $ex)
 {
     echo $ex->getMessage();
 }
+echo '</center>';
